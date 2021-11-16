@@ -1,0 +1,136 @@
+on:
+  push:
+    paths:
+      - 'Taromati2/**'
+      - 'ssp/**'
+
+name: auto release
+
+jobs:
+  check:
+    name: auto check before release
+    runs-on: windows-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: shiori-check
+        uses: Taromati2/yaya-CI-check@v2
+        with:
+          shiori-path: .\Taromati2\ghost\master\shiori\aya.dll
+  build:
+    name: auto release
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - name: disable auto crlf
+        uses: steve02081504/disable-autocrlf@v1
+        with:
+          fuck-auto-CRLF: true
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 7
+      - name: changed-ghost-check
+        uses: marceloprado/has-changed-path@v1
+        id: changed-ghost
+        with:
+          paths: Taromati2
+      - name: changed-ssp-check
+        uses: marceloprado/has-changed-path@v1
+        id: changed-ssp
+        with:
+          paths: ssp
+      - name: only ssp updated
+        if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-ssp.outputs.changed == 'true'
+        run: |
+          echo "release-massages=（只有ssp更新了）" >> $GITHUB_ENV
+      - name: only ghost updated
+        if: steps.changed-ssp.outputs.changed == 'false' && steps.changed-ghost.outputs.changed == 'true'
+        run: |
+          echo "release-massages=（只有ghost更新了）" >> $GITHUB_ENV
+      - name: ghost and ssp updated
+        if: steps.changed-ghost.outputs.changed == 'true' && steps.changed-ssp.outputs.changed == 'true'
+        run: |
+          echo "release-massages=（ghost&ssp更新）" >> $GITHUB_ENV
+      - name: get 7z
+        if: steps.changed-ghost.outputs.changed == 'false'
+        run: |
+          aria2c https://github.com/Taromati2/package-factory/releases/latest/download/Taromati2.7z
+          7z x Taromati2.7z -o./
+      - name: build 7z
+        if: steps.changed-ghost.outputs.changed == 'true'
+        run: |
+          7z a -tzip "Taromati2.nar" -mx=0 -mmt -mtc=off -r "Taromati2"
+          7z a -t7z "Taromati2.7z" s=9999f4g -mx=9 -mmt -mtm=off -ms=512m -mhc -mhcf -m0=LZMA2:a=2:d=1536m:mf=bt4:fb=273:lc=4:lp=0:pb=4 -r "Taromati2.nar"
+      - name: build StarterPack
+        run: |
+          rm -rf for_ssp
+          7z a -t7z "StarterPack.7z" s=9999f4g -mx=9 -mmt -mtm=off -ms=512m -mhc -mhcf -m0=LZMA2:a=2:d=1536m:mf=bt4:fb=273:lc=4:lp=0:pb=4 -r "Taromati2.nar" "ssp" "for_release/使用方法.txt"
+          rm -rf Taromati2.nar
+      - name: get nar
+        if: steps.changed-ghost.outputs.changed == 'false'
+        run: |
+          aria2c https://github.com/Taromati2/package-factory/releases/latest/download/Taromati2.nar
+      - name: build nar
+        if: steps.changed-ghost.outputs.changed == 'true'
+        run: |
+          7z a -tzip "Taromati2.nar" -mx=9 -mmt -mm=LZMA -md=1536m -mfb=273 -mtc=off -r "Taromati2"
+      - name: get narpng
+        if: steps.changed-ghost.outputs.changed == 'false'
+        run: |
+          aria2c https://github.com/Taromati2/package-factory/releases/latest/download/Taromati2.png
+      - name: build narpng
+        if: steps.changed-ghost.outputs.changed == 'true'
+        run: |
+          aria2c https://github.com/Taromati2/Taromati2/raw/master/.github/repository-open-graph.png
+          cat repository-open-graph.png Taromati2.nar >> Taromati2.png
+      - name: create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.run_id }}
+          release_name: auto build
+          body: |
+            自动构建的包文件
+            仅此而已
+            ${{ env.release-massages }}
+          draft: false
+          prerelease: false
+      - name: upload StarterPack
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./StarterPack.7z
+          asset_name: StarterPack.7z
+          asset_content_type: application/zip
+      - name: upload nar
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Taromati2.nar
+          asset_name: Taromati2.nar
+          asset_content_type: application/zip
+      - name: upload 7z
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Taromati2.7z
+          asset_name: Taromati2.7z
+          asset_content_type: application/zip
+      - name: upload narpng
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Taromati2.png
+          asset_name: Taromati2.png
+          asset_content_type: application/zip

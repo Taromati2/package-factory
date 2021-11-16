@@ -1,0 +1,63 @@
+on:
+  schedule:
+    - cron:  '0 0 * * *'
+  push:
+    paths:
+      - '.github/workflows/**'
+      - 'for_ssp/**'
+      - 'dic_overwrite/**'
+
+name: watch updates
+
+jobs:
+  watch:
+    name: watch updates
+    runs-on: ubuntu-latest
+    steps:
+      - name: disable auto crlf
+        uses: steve02081504/disable-autocrlf@v1
+        with:
+          fuck-auto-CRLF: true
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: clone stable-mirror
+        run: |
+          git clone --depth 1 --filter=blob:none --sparse https://github.com/Taromati2/stable-mirror
+          cd stable-mirror
+          git sparse-checkout init
+          git sparse-checkout set Taromati2/ghost/master
+          cd ..
+      - name: build taromati2 dic
+        run: |
+          rm -rf Taromati2/ghost/master/dic
+          /bin/cp -rf stable-mirror/Taromati2/ghost/master/dic Taromati2/ghost/master
+          /bin/cp -rf dic_overwrite/* Taromati2/ghost/master/dic
+      - name: update aya
+        run: |
+          /bin/cp -rf stable-mirror/Taromati2/ghost/master/shiori/aya.dll Taromati2/ghost/master/shiori/aya.dll
+          /bin/cp -rf stable-mirror/Taromati2/ghost/master/shiori/aya.dll for_ssp/ghost/ssper/ghost/master/ssper.dll
+      - name: remove stable-mirror
+        run: rm -rf stable-mirror
+      - name: build ssp
+        run: |
+          rm -rf ssp
+          aria2c -o ssp.zip "http://ssp.shillest.net/archive/redir.cgi?stable&full&zip"
+          mkdir ssp
+          7z x ssp.zip -o./ssp/
+          rm -rf ssp/ghost ssp/balloon ssp/temp
+          find . -name "updates2.dau" | xargs rm -f
+          find . -name "updates.txt" | xargs rm -f
+          aria2c https://github.com/steve02081504/ssp-sinicization/releases/latest/download/chinese-simplified.nar
+          7z x chinese-simplified.nar -o./ssp/data/language/ -tzip
+          /bin/cp -rf ./for_ssp/* ./ssp
+          rm -rf ssp.zip chinese-simplified.nar
+      - name: add all
+        run: git add -A
+      - name: push
+        uses: actions-go/push@master
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+          author-email: taromati2@foxmail.com
+          author-name: Taromati2
+          commit-message: 'files update~'
+          remote: origin
