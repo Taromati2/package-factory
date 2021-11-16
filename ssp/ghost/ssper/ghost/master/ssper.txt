@@ -1,0 +1,8 @@
+charset,UTF-8
+dic, dic\ssper_shiori3.dic
+dic, dic\ssper_aprication.dic
+dic, dic\ssper_bootend.dic
+dic, dic\ssper_etc.dic
+dic, dic\ssper_menu.dic
+dic, dic\ssper_mouse.dic
+dic, dic\ssper_string.dic

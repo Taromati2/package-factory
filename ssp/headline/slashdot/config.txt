@@ -1,0 +1,6 @@
+parse.start,<a name="articles"></a>
+parse.end,<aside id="slashboxes">
+element.start,<h2 class="story">
+element.end,</h2>
+headline.head,■
+charset,UTF-8

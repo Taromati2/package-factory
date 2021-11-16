@@ -1,0 +1,6 @@
+parse.start,<table id="importance_info">
+parse.end,</table>
+element.start,<td class="im_detail">
+element.end,</td>
+headline.head,Бе
+charset,UTF-8

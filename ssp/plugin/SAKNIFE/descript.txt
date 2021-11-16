@@ -1,0 +1,5 @@
+Charset,Shift_JIS
+name,SwissArmyKnife
+filename,SAKNIFE.dll
+id,8F8BCFB8-B27A-456f-9BA0-551484856DDC
+homeurl,http://ssp.shillest.net/update/plugin/saknife/

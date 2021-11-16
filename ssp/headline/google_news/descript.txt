@@ -1,0 +1,7 @@
+charset,Shift_JIS
+type,rss
+name,Google ニュース 日本語版
+url,http://news.google.co.jp/
+feed,http://news.google.com/news?hl=ja&ned=us&ie=UTF-8&oe=UTF-8&output=atom&topic=h
+homeurl,http://ssp.shillest.net/update/headline/google_news/
+

@@ -1,0 +1,6 @@
+charset,Shift_JIS
+name,‰ñûE–³C—“™‚Ì‚¨’m‚ç‚¹
+dllname,headline.dll
+url,http://www.recall.go.jp/article/
+openurl,http://www.recall.go.jp/article/
+homeurl,http://ssp.shillest.net/update/headline/recall/

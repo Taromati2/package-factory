@@ -1,0 +1,5 @@
+Charset,Shift_JIS
+type,plugin
+name,十徳ナイフ
+directory,SAKNIFE
+refresh,1

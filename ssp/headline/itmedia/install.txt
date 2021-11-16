@@ -1,0 +1,4 @@
+charset,ASCII
+type,headline
+name,ITMedia News
+directory,itmedia

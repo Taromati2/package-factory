@@ -1,0 +1,4 @@
+charset,ASCII
+type,headline
+name,SlashDot-JP
+directory,slashdot
