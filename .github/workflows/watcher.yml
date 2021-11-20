@@ -1,6 +1,16 @@
 on:
   schedule:
     - cron:  '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      watch-ghost:
+        description: '检查ghost更新'
+        required: true
+        default: 'true'
+      watch-ssp:
+        description: '检查ssp更新'
+        required: true
+        default: 'true'
   push:
     paths:
       - '.github/workflows/**'
@@ -21,6 +31,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
       - name: clone stable-mirror
+        if: github.event.inputs.watch-ghost != 'false'
         run: |
           git clone --depth 1 --filter=blob:none --sparse https://github.com/Taromati2/stable-mirror
           cd stable-mirror
@@ -28,17 +39,21 @@ jobs:
           git sparse-checkout set Taromati2/ghost/master
           cd ..
       - name: build taromati2 dic
+        if: github.event.inputs.watch-ghost != 'false'
         run: |
           rm -rf Taromati2/ghost/master/dic
           /bin/cp -rf stable-mirror/Taromati2/ghost/master/dic Taromati2/ghost/master
           /bin/cp -rf dic_overwrite/* Taromati2/ghost/master/dic
       - name: update aya
+        if: github.event.inputs.watch-ghost != 'false'
         run: |
           /bin/cp -rf stable-mirror/Taromati2/ghost/master/shiori/aya.dll Taromati2/ghost/master/shiori/aya.dll
           /bin/cp -rf stable-mirror/Taromati2/ghost/master/shiori/aya.dll for_ssp/ghost/ssper/ghost/master/ssper.dll
       - name: remove stable-mirror
+        if: github.event.inputs.watch-ghost != 'false'
         run: rm -rf stable-mirror
       - name: build ssp
+        if: github.event.inputs.watch-ssp != 'false'
         run: |
           rm -rf ssp
           aria2c -o ssp.zip "http://ssp.shillest.net/archive/redir.cgi?stable&full&zip"
