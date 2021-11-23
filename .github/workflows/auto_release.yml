@@ -3,6 +3,7 @@ on:
     paths:
       - 'Taromati2/**'
       - 'ssp/**'
+  workflow_dispatch
 
 name: auto release
 
@@ -64,8 +65,9 @@ jobs:
           7z a -t7z "Taromati2.7z" s=9999f4g -mx=9 -mmt -mtm=off -ms=512m -mhc -mhcf -m0=LZMA2:a=2:d=1536m:mf=bt4:fb=273:lc=4:lp=0:pb=4 -r "Taromati2.nar"
       - name: build StarterPack
         run: |
-          rm -rf for_ssp
-          7z a -t7z "StarterPack.7z" s=9999f4g -mx=9 -mmt -mtm=off -ms=512m -mhc -mhcf -m0=LZMA2:a=2:d=1536m:mf=bt4:fb=273:lc=4:lp=0:pb=4 -r "Taromati2.nar" "ssp" "for_release/使用方法.txt"
+          mv for_release/* .
+          rm -rf for_ssp for_release
+          7z a -t7z "StarterPack.7z" s=9999f4g -mx=9 -mmt -mtm=off -ms=512m -mhc -mhcf -m0=LZMA2:a=2:d=1536m:mf=bt4:fb=273:lc=4:lp=0:pb=4 -r "Taromati2.nar" "ssp" "使用方法.txt"
           rm -rf Taromati2.nar
       - name: get nar
         if: steps.changed-ghost.outputs.changed == 'false'
