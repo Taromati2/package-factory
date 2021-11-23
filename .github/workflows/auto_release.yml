@@ -1,9 +1,9 @@
 on:
+  workflow_dispatch
   push:
     paths:
       - 'Taromati2/**'
       - 'ssp/**'
-  workflow_dispatch
 
 name: auto release
 
