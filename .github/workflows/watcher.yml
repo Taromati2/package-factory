@@ -21,6 +21,7 @@ name: watch updates
 
 jobs:
   watch:
+    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
     name: watch updates
     runs-on: ubuntu-latest
     steps:
