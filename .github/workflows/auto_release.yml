@@ -5,7 +5,7 @@ on:
       - 'ssp/**'
       - '.github/workflows/auto_release.yml'
     tags-ignore:
-      - bot-*
+      - 'bot-*'
 
 name: auto release
 
@@ -92,9 +92,9 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: bot-${{ secrets.BOT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
         with:
-          tag_name: ${{ github.run_id }}
+          tag_name: bot-${{ github.run_id }}
           release_name: auto build
           body: |
             自动构建的包文件
