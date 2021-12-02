@@ -4,6 +4,8 @@ on:
       - 'Taromati2/**'
       - 'ssp/**'
       - '.github/workflows/auto_release.yml'
+    tags-ignore:
+      - bot-*
 
 name: auto release
 
@@ -90,7 +92,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: bot-${{ secrets.BOT_TOKEN }}
         with:
           tag_name: ${{ github.run_id }}
           release_name: auto build
