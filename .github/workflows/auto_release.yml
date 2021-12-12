@@ -55,7 +55,7 @@ jobs:
         if: steps.changed-ghost.outputs.changed == 'true' && steps.changed-ssp.outputs.changed == 'true'
         run: |
           echo "release-massages=（ghost&ssp更新）" >> $GITHUB_ENV
-      - name: ghost and ssp updated
+      - name: others updated
         if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-ssp.outputs.changed == 'false'
         run: |
           echo "release-massages=（附件更新）" >> $GITHUB_ENV
