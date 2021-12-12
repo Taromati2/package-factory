@@ -14,7 +14,6 @@ on:
   push:
     paths:
       - '.github/workflows/**'
-      - 'for_ssp/**'
       - 'dic_overwrite/**'
 
 name: watch updates
@@ -64,8 +63,6 @@ jobs:
           find . -name "updates.txt" | xargs rm -f
           aria2c https://github.com/steve02081504/ssp-sinicization/releases/latest/download/chinese-simplified.nar
           7z x chinese-simplified.nar -o./ssp/data/language/ -tzip
-          /bin/cp -rf ./for_ssp/* ./ssp
-          /bin/cp -rf Taromati2/ghost/master/shiori/aya.dll ssp/ghost/ssper/ghost/master/ssper.dll
           rm -rf ssp.zip chinese-simplified.nar
       - name: add all
         run: git add -A
