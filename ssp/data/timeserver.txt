@@ -2,7 +2,7 @@ NICT NTP Service-SNTP (JP)	SNTP	NORMAL	ntp.nict.jp
 Internet Multifeed (JP)	SNTP	NORMAL	ntp.jst.mfeed.ad.jp
 Ring Server Project (JP)	SNTP	NORMAL	ntp.ring.gr.jp
 AMANO Time Business(JP)	SNTP	NORMAL	ats1.e-timing.ne.jp
-NIST (US)	SNTP	NORANDOM	time-nw.nist.gov
+NIST (US)	SNTP	NORANDOM	time.nist.gov
 POOL NTP (All)	SNTP	NORMAL	pool.ntp.org
 POOL NTP (Asia)	SNTP	NORANDOM	asia.pool.ntp.org
 POOL NTP (JP)	SNTP	NORANDOM	jp.pool.ntp.org
