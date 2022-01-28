@@ -64,6 +64,9 @@ info.archivepassword.retry,パスワードが違います。\n正しいパスワ
 
 info.developer.testupdate,更新対象のファイル数を入力してください。
 
+info.developer.timemachine,「現在時刻の仮想的変更」が有効になっています。\n通常の時刻に戻したい場合は、開発用パレットから解除してください。
+info.url.ghostboot,開こうとしているURLに指定されているゴーストを起動しますか？
+
 //Resource
 resource.common.yesno,はい,いいえ
 resource.common.okcancel,OK,キャンセル
