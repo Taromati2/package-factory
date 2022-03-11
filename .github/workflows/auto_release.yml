@@ -59,16 +59,6 @@ jobs:
         if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-ssp.outputs.changed == 'false'
         run: |
           echo "release-massages=（附件更新）" >> $GITHUB_ENV
-      - name: get 7z
-        if: steps.changed-ghost.outputs.changed == 'false'
-        run: |
-          aria2c https://github.com/Taromati2/package-factory/releases/latest/download/Taromati2.7z
-          7z x Taromati2.7z -o./
-      - name: build 7z
-        if: steps.changed-ghost.outputs.changed == 'true'
-        run: |
-          7z a -tzip "Taromati2.nar" -mx=0 -mmt -mtc=off -r "Taromati2"
-          7z a -t7z "Taromati2.7z" s=9999f4g -mx=9 -mmt -mtm=off -ms=512m -mhc -mhcf -m0=LZMA2:a=2:d=1536m:mf=bt4:fb=273:lc=4:lp=0:pb=4 -r "Taromati2.nar"
       - name: build StarterPack
         run: |
           mv for_release/* .
@@ -125,15 +115,6 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./Taromati2.nar
           asset_name: Taromati2.nar
-          asset_content_type: application/zip
-      - name: upload 7z
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./Taromati2.7z
-          asset_name: Taromati2.7z
           asset_content_type: application/zip
       - name: upload narpng
         uses: actions/upload-release-asset@v1
