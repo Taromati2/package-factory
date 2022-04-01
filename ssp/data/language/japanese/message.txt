@@ -12,6 +12,7 @@ error.browserexec,ブラウザの起動に失敗しました。\n設定->外部�
 error.tempboot,一時ファイル用フォルダ(Tempフォルダ)内で起動しています。
 error.uacboot,ユーザーアカウント制御(UAC)の管理下のフォルダ内で起動しています。
 error.asciiboot,文字コードの問題でファイルにアクセスできない可能性があるフォルダ内で起動しています。
+error.alreadyrunning,SSPがすでに起動しているようです。
 error.bootanyway,このまま使用するとデータが失われる可能性があります。それでも起動しますか？
 
 //Ask / Info
@@ -66,6 +67,9 @@ info.developer.testupdate,更新対象のファイル数を入力してくださ
 
 info.developer.timemachine,「現在時刻の仮想的変更」が有効になっています。\n通常の時刻に戻したい場合は、開発用パレットから解除してください。
 info.url.ghostboot,開こうとしているURLに指定されているゴーストを起動しますか？
+
+info.shortcut.desktop,デスクトップにこのゴーストを起動するショートカットを作成しますか？
+info.shortcut.startup,OS起動時にこのゴーストを自動起動するようにしますか？
 
 //Resource
 resource.common.yesno,はい,いいえ
