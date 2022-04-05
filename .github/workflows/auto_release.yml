@@ -43,6 +43,11 @@ jobs:
         id: changed-ssp
         with:
           paths: ssp
+      - name: changed-ison-check
+        uses: marceloprado/has-changed-path@v1
+        id: changed-icon
+        with:
+          paths: .nar_icon
       - name: only ssp updated
         if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-ssp.outputs.changed == 'true'
         run: |
@@ -55,8 +60,12 @@ jobs:
         if: steps.changed-ghost.outputs.changed == 'true' && steps.changed-ssp.outputs.changed == 'true'
         run: |
           echo "release-massages=（ghost&ssp更新）" >> $GITHUB_ENV
+      - name: nar icons updated
+        if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-ssp.outputs.changed == 'false' && steps.changed-icon.outputs.changed == 'true'
+        run: |
+          echo "release-massages=（nar图标更新）" >> $GITHUB_ENV
       - name: others updated
-        if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-ssp.outputs.changed == 'false'
+        if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-ssp.outputs.changed == 'false' && steps.changed-icon.outputs.changed == 'false'
         run: |
           echo "release-massages=（附件更新）" >> $GITHUB_ENV
       - name: build StarterPack
@@ -68,19 +77,19 @@ jobs:
           7z a -t7z "StarterPack.7z" s=9999f4g -mx=9 -mmt -mtm=off -ms=512m -mhc -mhcf -m0=LZMA2:a=2:d=1536m:mf=bt4:fb=273:lc=4:lp=0:pb=4 -r "Taromati2.nar" "ssp" "使用方法.txt"
           rm -rf Taromati2.nar
       - name: get nar
-        if: steps.changed-ghost.outputs.changed == 'false'
+        if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-icon.outputs.changed == 'false'
         run: |
           aria2c https://github.com/Taromati2/package-factory/releases/latest/download/Taromati2.nar
       - name: build nar
-        if: steps.changed-ghost.outputs.changed == 'true'
+        if: steps.changed-ghost.outputs.changed == 'true' || steps.changed-icon.outputs.changed == 'true'
         run: |
-          7z a -tzip "Taromati2.nar" -mx=9 -mmt -mm=LZMA -md=1536m -mfb=273 -mtc=off -r "Taromati2"
+          7z a -tzip "Taromati2.nar" -mx=9 -mmt -mm=LZMA -md=1536m -mfb=273 -mtc=off -r "Taromati2" ".nar_icon"
       - name: get narpng
-        if: steps.changed-ghost.outputs.changed == 'false'
+        if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-icon.outputs.changed == 'false'
         run: |
           aria2c https://github.com/Taromati2/package-factory/releases/latest/download/Taromati2.png
       - name: build narpng
-        if: steps.changed-ghost.outputs.changed == 'true'
+        if: steps.changed-ghost.outputs.changed == 'true' || steps.changed-icon.outputs.changed == 'true'
         run: |
           aria2c https://github.com/Taromati2/Taromati2/raw/master/.github/repository-open-graph.png
           cat repository-open-graph.png Taromati2.nar >> Taromati2.png
