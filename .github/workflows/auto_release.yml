@@ -85,15 +85,11 @@ jobs:
         if: steps.changed-ghost.outputs.changed == 'true' || steps.changed-icon.outputs.changed == 'true'
         run: |
           7z a -tzip "Taromati2.nar" -mx=9 -mmt -mm=LZMA -md=1536m -mfb=273 -mtc=off -r "Taromati2" ".nar_icon"
-      - name: get narpng
-        if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-icon.outputs.changed == 'false'
+      - name: build narpng & StarterPackPng
         run: |
-          aria2c https://github.com/Taromati2/package-factory/releases/latest/download/Taromati2.png
-      - name: build narpng
-        if: steps.changed-ghost.outputs.changed == 'true' || steps.changed-icon.outputs.changed == 'true'
-        run: |
-          aria2c https://github.com/Taromati2/Taromati2/raw/master/.github/repository-open-graph.png
+          aria2c https://github.com/Taromati2/other/raw/master/github/repository-open-graph.png
           cat repository-open-graph.png Taromati2.nar >> Taromati2.png
+          cat repository-open-graph.png StarterPack.7z >> TaroStarterPack.png
       - name: create release
         id: create_release
         uses: actions/create-release@v1
@@ -134,4 +130,13 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./Taromati2.png
           asset_name: Taromati2.png
+          asset_content_type: application/zip
+      - name: upload StarterPackPng
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./TaroStarterPack.png
+          asset_name: TaroStarterPack.png
           asset_content_type: application/zip
