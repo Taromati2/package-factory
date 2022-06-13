@@ -4,7 +4,6 @@ on:
       - 'Taromati2/**'
       - 'ssp/**'
       - 'for_ssp/**'
-      - '.github/workflows/auto_release.yml'
 
 name: auto release
 
