@@ -14,7 +14,7 @@ on:
   push:
     paths:
       - '.github/workflows/**'
-      - 'dic_overwrite/**'
+      - 'build_resources/dic_overwrite/**'
 
 name: watch updates
 
@@ -43,7 +43,7 @@ jobs:
         run: |
           rm -rf Taromati2/ghost/master/dic
           /bin/cp -rf stable-mirror/Taromati2/ghost/master/dic Taromati2/ghost/master
-          /bin/cp -rf dic_overwrite/* Taromati2/ghost/master/dic
+          /bin/cp -rf build_resources/dic_overwrite/* Taromati2/ghost/master/dic
       - name: build full data pack
         if: github.event.inputs.watch-ghost != 'false'
         run: |

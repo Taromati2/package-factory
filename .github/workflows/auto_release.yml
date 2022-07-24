@@ -3,7 +3,7 @@ on:
     paths:
       - 'Taromati2/**'
       - 'ssp/**'
-      - 'for_ssp/**'
+      - 'build_resources/for_ssp/**'
   workflow_dispatch:
     inputs:
       pre-release:
@@ -57,7 +57,7 @@ jobs:
         uses: marceloprado/has-changed-path@v1
         id: changed-icon
         with:
-          paths: nar_icons
+          paths: build_resources/nar_icons
       - name: only ssp updated
         if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-ssp.outputs.changed == 'true'
         run: |
@@ -84,11 +84,10 @@ jobs:
           echo "release-massages=（附件更新）" >> $GITHUB_ENV
       - name: build StarterPack
         run: |
-          mv for_release/* .
-          /bin/cp -rf ./for_ssp/* ./ssp
+          mv build_resources/for_release/* .
+          /bin/cp -rf build_resources/for_ssp/* ./ssp
           /bin/cp -rf Taromati2/ghost/master/shiori/aya.dll ssp/ghost/ssper/ghost/master/ssper.dll
-          rm -rf for_ssp for_release
-          /bin/cp -rf ./nar_icons/Taromati2/.nar_icon ./.nar_icon
+          /bin/cp -rf build_resources/nar_icons/Taromati2/.nar_icon ./.nar_icon
           7z a -tzip "Taromati2.nar" -mx=0 -mmt -mtc=off -r "Taromati2" ".nar_icon"
           7z a -t7z "StarterPack.7z" s=9999f4g -mx=9 -mmt -mtm=off -ms=512m -mhc -mhcf -m0=LZMA2:a=2:d=1536m:mf=bt4:fb=273:lc=4:lp=0:pb=4 -r "Taromati2.nar" "ssp" "使用方法.txt"
           rm -rf Taromati2.nar
@@ -100,7 +99,7 @@ jobs:
         if: steps.changed-ghost.outputs.changed == 'true' || steps.changed-icon.outputs.changed == 'true'
         run: |
           rm -rf ./.nar_icon
-          /bin/cp -rf ./nar_icons/Taromati2/.nar_icon ./.nar_icon
+          /bin/cp -rf build_resources/nar_icons/Taromati2/.nar_icon ./.nar_icon
           7z a -tzip "Taromati2.nar" -mx=9 -mmt -mm=LZMA -md=1536m -mfb=273 -mtc=off -r "Taromati2" ".nar_icon"
       - name: get full data pack
         if: steps.changed-full-data-pack.outputs.changed == 'false' && steps.changed-icon.outputs.changed == 'false'
@@ -110,7 +109,7 @@ jobs:
         if: steps.changed-full-data-pack.outputs.changed == 'true' || steps.changed-icon.outputs.changed == 'true'
         run: |
           rm -rf ./.nar_icon
-          /bin/cp -rf ./nar_icons/full_data_pack/.nar_icon ./.nar_icon
+          /bin/cp -rf build_resources/nar_icons/full_data_pack/.nar_icon ./.nar_icon
           7z a -tzip "full_data_pack.nar" -mx=9 -mmt -mm=LZMA -md=1536m -mfb=273 -mtc=off -r "full_data_pack" ".nar_icon"
       - name: create release
         id: create_release
