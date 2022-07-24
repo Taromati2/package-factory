@@ -4,6 +4,12 @@ on:
       - 'Taromati2/**'
       - 'ssp/**'
       - 'for_ssp/**'
+  workflow_dispatch:
+    inputs:
+      pre-release:
+        description: '是否是预发布（通常用于测试包构建，不会影响latest链接）'
+        required: true
+        default: 'false'
 
 name: auto release
 
@@ -37,6 +43,11 @@ jobs:
         id: changed-ghost
         with:
           paths: Taromati2
+      - name: changed-full-data-pack-check
+        uses: marceloprado/has-changed-path@v1
+        id: changed-full-data-pack
+        with:
+          paths: full_data_pack
       - name: changed-ssp-check
         uses: marceloprado/has-changed-path@v1
         id: changed-ssp
@@ -46,7 +57,7 @@ jobs:
         uses: marceloprado/has-changed-path@v1
         id: changed-icon
         with:
-          paths: .nar_icon
+          paths: nar_icons
       - name: only ssp updated
         if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-ssp.outputs.changed == 'true'
         run: |
@@ -63,6 +74,10 @@ jobs:
         if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-ssp.outputs.changed == 'false' && steps.changed-icon.outputs.changed == 'true'
         run: |
           echo "release-massages=（nar图标更新）" >> $GITHUB_ENV
+      - name: full data pack updated
+        if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-ssp.outputs.changed == 'false' && steps.changed-full-data-pack.outputs.changed == 'true'
+        run: |
+          echo "release-massages=（数据包更新）" >> $GITHUB_ENV
       - name: others updated
         if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-ssp.outputs.changed == 'false' && steps.changed-icon.outputs.changed == 'false'
         run: |
@@ -73,6 +88,7 @@ jobs:
           /bin/cp -rf ./for_ssp/* ./ssp
           /bin/cp -rf Taromati2/ghost/master/shiori/aya.dll ssp/ghost/ssper/ghost/master/ssper.dll
           rm -rf for_ssp for_release
+          /bin/cp -rf ./nar_icons/Taromati2/.nar_icon ./.nar_icon
           7z a -tzip "Taromati2.nar" -mx=0 -mmt -mtc=off -r "Taromati2" ".nar_icon"
           7z a -t7z "StarterPack.7z" s=9999f4g -mx=9 -mmt -mtm=off -ms=512m -mhc -mhcf -m0=LZMA2:a=2:d=1536m:mf=bt4:fb=273:lc=4:lp=0:pb=4 -r "Taromati2.nar" "ssp" "使用方法.txt"
           rm -rf Taromati2.nar
@@ -83,7 +99,19 @@ jobs:
       - name: build nar
         if: steps.changed-ghost.outputs.changed == 'true' || steps.changed-icon.outputs.changed == 'true'
         run: |
+          rm -rf ./.nar_icon
+          /bin/cp -rf ./nar_icons/Taromati2/.nar_icon ./.nar_icon
           7z a -tzip "Taromati2.nar" -mx=9 -mmt -mm=LZMA -md=1536m -mfb=273 -mtc=off -r "Taromati2" ".nar_icon"
+      - name: get full data pack
+        if: steps.changed-full-data-pack.outputs.changed == 'false' && steps.changed-icon.outputs.changed == 'false'
+        run: |
+          aria2c https://github.com/Taromati2/package-factory/releases/latest/download/full_data_pack.nar
+      - name: build full data pack
+        if: steps.changed-full-data-pack.outputs.changed == 'true' || steps.changed-icon.outputs.changed == 'true'
+        run: |
+          rm -rf ./.nar_icon
+          /bin/cp -rf ./nar_icons/full_data_pack/.nar_icon ./.nar_icon
+          7z a -tzip "full_data_pack.nar" -mx=9 -mmt -mm=LZMA -md=1536m -mfb=273 -mtc=off -r "full_data_pack" ".nar_icon"
       - name: create release
         id: create_release
         uses: actions/create-release@v1
@@ -97,7 +125,7 @@ jobs:
             仅此而已
             ${{ env.release-massages }}
           draft: false
-          prerelease: false
+          prerelease: ${{ github.event.inputs.prerelease == 'true' }}
       - name: upload StarterPack
         uses: actions/upload-release-asset@v1
         env:
@@ -115,4 +143,13 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./Taromati2.nar
           asset_name: Taromati2.nar
+          asset_content_type: application/zip
+      - name: upload full data pack
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./full_data_pack.nar
+          asset_name: full_data_pack.nar
           asset_content_type: application/zip

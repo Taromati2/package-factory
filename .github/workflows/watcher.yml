@@ -44,6 +44,15 @@ jobs:
           rm -rf Taromati2/ghost/master/dic
           /bin/cp -rf stable-mirror/Taromati2/ghost/master/dic Taromati2/ghost/master
           /bin/cp -rf dic_overwrite/* Taromati2/ghost/master/dic
+      - name: build full data pack
+        if: github.event.inputs.watch-ghost != 'false'
+        run: |
+          cd full_data_pack
+          rm -rf data img pseudoAI
+          /bin/cp -rf ../stable-mirror/Taromati2/ghost/master/data data
+          /bin/cp -rf ../stable-mirror/Taromati2/ghost/master/img img
+          /bin/cp -rf ../stable-mirror/Taromati2/ghost/master/pseudoAI pseudoAI
+          cd ..
       - name: update aya
         if: github.event.inputs.watch-ghost != 'false'
         run: |
