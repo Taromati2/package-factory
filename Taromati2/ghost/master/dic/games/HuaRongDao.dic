@@ -118,7 +118,6 @@ ClearHuaRongDaoVar:void{
 	ERASEVAR('dest.x')
 	ERASEVAR('dest.y')
 	ERASEVAR('Role')
-	ERASEVAR('buff')
 	ERASEVAR('xStart')
 	ERASEVAR('yStart')
 	ERASEVAR('kind')
@@ -275,7 +274,6 @@ LoadHuaRongDaoMap{
 	_num ='#'
 	_mapfile = 'PATH\map.txt'
 	levelName=''
-	_txt = ''
 	Role=IARRAY
 	i=0
 	TotalLevel=0
@@ -299,7 +297,6 @@ LoadHuaRongDaoMap{
 			'error'
 		}
 		if '#' _in_ _buff{
-			buff=_buff
 			levelName=TextBetween(_buff,'#','@')
 			for i=0;i<TotalLevel;i++{
 				_buff = FREAD(_mapfile)
