@@ -96,7 +96,7 @@ jobs:
           7z a -t7z "StarterPack.7z" -mx=9 -mmt -mtm=off -ms=512m -mhc -mhcf -m0=LZMA2:a=2:d=1536m:mf=bt4:fb=273:lc=4:lp=0:pb=4 "Taromati2.nar" "ssp" "使用方法.txt"
           rm -rf Taromati2.nar
       - name: get nar
-        if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-icon.outputs.changed == 'false' && github.event.inputs.rebuild-all == 'false'
+        if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-icon.outputs.changed == 'false' && github.event.inputs.rebuild-all != 'true'
         run: |
           aria2c https://github.com/Taromati2/package-factory/releases/latest/download/Taromati2.nar
       - name: build nar
@@ -106,7 +106,7 @@ jobs:
           /bin/cp -rf build_resources/nar_icons/Taromati2/.nar_icon ./.nar_icon
           7z a -tzip "Taromati2.nar" -mx=9 -mmt -mm=LZMA -md=1536m -mfb=273 -mtc=off "Taromati2" ".nar_icon"
       - name: get full data pack
-        if: steps.changed-full-data-pack.outputs.changed == 'false' && steps.changed-icon.outputs.changed == 'false' && github.event.inputs.rebuild-all == 'false'
+        if: steps.changed-full-data-pack.outputs.changed == 'false' && steps.changed-icon.outputs.changed == 'false' && github.event.inputs.rebuild-all != 'true'
         run: |
           aria2c https://github.com/Taromati2/package-factory/releases/latest/download/full_data_pack.nar
       - name: build full data pack
