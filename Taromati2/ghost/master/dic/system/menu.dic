@@ -172,9 +172,10 @@ OpenMenuTalk{
 		elseif nurturance.Darkness>=250
 			"\0\s[27]%(username)要让橘花消灭谁呢"
 		if click>10{
-			"\0\s[21]讨厌，%(username)点这么快，当橘花是傻瓜吗\e:click=NULL"
+			click=0
+			"\0\s[21]讨厌，%(username)点这么快，当橘花是傻瓜吗\e"
 			if nurturance.Darkness>nurturance.Dependency
-				"\0\s[27]讨厌，%(username)想被锯上一锯吗？\e:click=NULL"
+				"\0\s[27]讨厌，%(username)想被锯上一锯吗？\e"
 		}
 	}
 	elseif !_phase {
@@ -581,7 +582,7 @@ Select.System{
 	%(year)年%(month)月%(day)日  \f[color,%(_color)]星期%(lunardata[3])\f[color,default]   %(_ampm)%(_hour)点%(minute)分\n/
 	农历 %(lunardata[4])年 %(lunardata[5])月%(lunardata[6])    \f[color,238,50,95]%(lunardata[10])\f[color,default]\n[150]/
 	\n[half]/
-	ＣＰＵ：%(CALLSAORI('cpuid','cpu.name'))\n/
+	ＣＰＵ：%(CPU_name)\n/
 	ＯＳ：%(_sysname)\n/
 	记忆体使用率：%(memoryload)\%\n/
 	记忆体(全体)：%(memorytotalphys/1048576) MB\n/
