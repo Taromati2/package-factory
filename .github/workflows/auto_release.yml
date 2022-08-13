@@ -95,6 +95,9 @@ jobs:
           7z a -tzip "Taromati2.nar" -mx=0 -mmt -mtc=off "Taromati2" ".nar_icon"
           7z a -t7z "StarterPack.7z" -mx=9 -mmt -mtm=off -ms=512m -mhc -mhcf -m0=LZMA2:a=2:d=1536m:mf=bt4:fb=273:lc=4:lp=0:pb=4 "Taromati2.nar" "ssp" "使用方法.txt"
           rm -rf Taromati2.nar
+      - name: build ssp pack
+        run: |
+          7z a -t7z -sfx "ssp.exe" -mx=9 -mmt -mtm=off -ms=512m -mhc -mhcf -m0=LZMA2:a=2:d=1536m:mf=bt4:fb=273:lc=4:lp=0:pb=4 .\ssp\*
       - name: get nar
         if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-icon.outputs.changed == 'false' && github.event.inputs.rebuild-all != 'true'
         run: |
@@ -156,3 +159,12 @@ jobs:
           asset_path: ./full_data_pack.nar
           asset_name: full_data_pack.nar
           asset_content_type: application/zip
+      - name: upload ssp pack
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./ssp.exe
+          asset_name: ssp.exe
+          asset_content_type: application/vnd.microsoft.portable-executable
