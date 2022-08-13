@@ -97,7 +97,8 @@ jobs:
           rm -rf Taromati2.nar
       - name: build ssp pack
         run: |
-          7z a -t7z -sfx "ssp.exe" -mx=9 -mmt -mtm=off -ms=512m -mhc -mhcf -m0=LZMA2:a=2:d=1536m:mf=bt4:fb=273:lc=4:lp=0:pb=4 .\ssp\*
+          7z a -t7z "ssp.7z" -mx=9 -mmt -mtm=off -ms=512m -mhc -mhcf -m0=LZMA2:a=2:d=1536m:mf=bt4:fb=273:lc=4:lp=0:pb=4 ./ssp/*
+          cat build_resources/7z.sfx ssp.7z > ssp.exe
       - name: get nar
         if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-icon.outputs.changed == 'false' && github.event.inputs.rebuild-all != 'true'
         run: |
