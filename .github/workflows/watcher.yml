@@ -48,10 +48,10 @@ jobs:
         if: github.event.inputs.watch-ghost != 'false'
         run: |
           cd full_data_pack
-          rm -rf data img pseudoAI
+          rm -rf data img
           /bin/cp -rf ../stable-mirror/Taromati2/ghost/master/data data
           /bin/cp -rf ../stable-mirror/Taromati2/ghost/master/img img
-          /bin/cp -rf ../stable-mirror/Taromati2/ghost/master/pseudoAI pseudoAI
+          rm -rf data/LearnJapanese/sonido/readme.txt
           cd ..
       - name: update aya
         if: github.event.inputs.watch-ghost != 'false'
