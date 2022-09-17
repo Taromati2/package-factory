@@ -91,6 +91,7 @@ ClearAyaTempVar {
 	ERASEVAR('displaybpp')
 	ERASEVAR('displaywidth')
 	ERASEVAR('displayheight')
+	ERASEVAR('displaypowerstatus')
 	ERASEVAR('uniqueid')
 	ERASEVAR('ghostboottime')
 	ERASEVAR('ghostbootmin')
@@ -725,8 +726,8 @@ SHIORI_FW.RaiseIDEvent {
 	}
 	else {//トークなし
 		if _event == 'OnAITalk' {
-			SHIORI3FW.LastAITalk = ''
-			SHIORI3FW.ResetAITalkInterval
+			SHIORI_FW.LastAITalk = ''
+			SHIORI_FW.ResetAITalkInterval
 		}
 	}
 
