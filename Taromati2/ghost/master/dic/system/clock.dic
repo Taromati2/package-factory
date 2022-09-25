@@ -128,7 +128,9 @@ OnMinuteChange{
 				'\0\v\s[33]电脑卡死了，\w9\w9少开点窗口。\n\q[◇打开任务管理器,OnOpenTaskmgr]\![set,trayballoon,--icon=info,--timeout=10,--title=任务繁忙,--text=电脑卡死了，少开点窗口。]'
 			}
 			elseif minute == 13 && !InUpdate && AutoUpdate == 1{//电脑不卡的情况下每时13分四分之一概率自动更新//选13是因为13不吉利:)
-				if !RAND(4)
+				if QuickStartVersion && !FullDataPackInstalled
+					do_nothing
+				elseif !RAND(4)
 					OnSilentUpdate
 			}
 		}
@@ -148,29 +150,8 @@ OnMinuteChange{
 		AgendaMonitor
 		--
 		if AutoShellChange[0]{
-			if TOINT(AutoShellChange[1])==5&&(hour-AutoShellChangeflag[3])%4==0&&minute==0{
-				AutoShellChangeflag[5]=1
-			}
-			elseif TOINT(AutoShellChange[1])==6&&(hour-AutoShellChangeflag[3])%2==0&&minute==0{
-				AutoShellChangeflag[5]=1
-			}
-			elseif TOINT(AutoShellChange[1])==7&&minute==0{
-				AutoShellChangeflag[5]=1
-			}
-			if AutoShellChangeflag[5]==1{
-				if !tshellid {
-					OnAutoChangeShell
-					tshellid=shellID
-				}
-				--
-				if tshellid!=shellID{
-					AutoShellChangeflag[5]=1
-					OnChangeShell(tshellid)
-				}
-				else{
-					tshellid=NULL
-					AutoShellChangeflag[5]=NULL
-				}
+			if TOINT(AutoShellChange[1])==2{
+				OnAutoChangeShell
 			}
 		}
 	}
