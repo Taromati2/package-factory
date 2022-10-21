@@ -107,15 +107,15 @@ OnFirstBoot{//改动于2020 by steve02081504
 		--
 		'\n\n[half]暂时、\w9要在此处打扰您了。'
 		--
-		SHIORI_FW.PushNotifyResult(DiscordCustomSet.CustomDetail('初次见面'))
+		SHIORI_FW.PushNoBreakNotifyResult(DiscordCustomSet.CustomDetail('初次见面'))
 		--
-		SHIORI_FW.PushNotifyResult(GetUsernameFirst)
-		SHIORI_FW.PushNotifyResult(GetPasswordFirst)
+		SHIORI_FW.PushNoBreakNotifyResult(GetUsernameFirst)
+		SHIORI_FW.PushNoBreakNotifyResult(GetPasswordFirst)
 		if QuickStartVersion
-			SHIORI_FW.PushNotifyResult(UpdateFirst)
+			SHIORI_FW.PushNoBreakNotifyResult(UpdateFirst)
 		--
 		if InTimeError
-			SHIORI_FW.PushNotifyResult(OnTimeError)
+			SHIORI_FW.PushNoBreakNotifyResult(OnTimeError)
 	}else{
 		OnBoot('FromFirstBoot')
 	}
@@ -176,9 +176,10 @@ OnBoot{
 	--
 	if LOADED_FROM_MAGIC
 		OnSilentChangeShell(shellID)
-	SHIORI_FW.PushNotifyResult(OnAutoChangeShell.boot)
+	else
+		SHIORI_FW.PushNoBreakNotifyResult(OnAutoChangeShell.boot)
 	--
-	SHIORI_FW.PushNotifyResult(OnBoot.base(_argv))
+	SHIORI_FW.PushNoBreakNotifyResult(OnBoot.base(_argv))
 }
 OnBoot.base{
 	if mode == '1'{
@@ -228,7 +229,7 @@ OnBoot.base{
 	}
 	elseif LOADED_FROM_MAGIC{//数据来自MAGICSAVE
 		intimacy -= 1
-		'\0\s[35]\w9.\w9.\w9.\w9\w9\w9\n\s[0]啊\w9\w9\s[6]，很抱歉\n\w9\w9\w9我做了个恶梦\w9\w9\w9\n\x'
+		SHIORI_FW.PushNoBreakNotifyResultToTop('\0\s[35]\w9.\w9.\w9.\w9\w9\w9\n\s[0]啊\w9\w9\s[6]，很抱歉\n\w9\w9\w9我做了个恶梦\w9\w9\w9\n\x')
 		return
 	}
 	--
@@ -841,6 +842,8 @@ OnWindowStateMinimize{
 }
 //**** 最小化から复帰 *************************************************************************************************
 OnWindowStateRestore{
+	'\t'
+	--
 	DiscordCustomSet.LargeImageKey('kikka_eye_open')
 	--
 	DiscordCustomSet.CustomDetail('从最小化中回来')

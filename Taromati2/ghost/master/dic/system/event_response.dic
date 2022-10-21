@@ -45,16 +45,8 @@ OnNotifySelfInfo:void{
 }
 //缺省信息补全&同步信息更新 by steve02081504
 OnNotifyUserInfo.WhenEmpty.username:void{
-	if _argv[0]{
-		_simplified_name = TOLOWER(TOSIMPLIFIED(_argv[0]))
-		case _simplified_name{
-			when 'administrator','user','guest','system','admin','管理员','root','autobvt','microsoft','test'{
-				do_nothing
-			}
-			others{
-				OnUserName.Set(_argv[0])
-			}
-		}
+	if !IsUserName.Special(_argv[0]){
+		OnUserName.Set(_argv[0])
 	}
 }
 OnNotifyUserInfo.WhenEmpty.birthday:void{
@@ -81,6 +73,8 @@ OnNotifyUserInfo{
 		_username=reference1
 	}
 	_birthday_changed=birthday != reference2 && Baseware.Config.birthday != reference2 && reference2
+	if IsUsername.Empty(_username)
+		_name_changed = 0
 	if _name_changed || _birthday_changed{
 		"同步%Baseware设定中的"
 		--
@@ -1121,9 +1115,9 @@ OnDisplayPowerStatus{
 			}
 			elseif _displaypowerofftime>3*60{
 				if mode == '1'
-					SHIORI_FW.PushNotifyResult("\1\s[%(specialmode != 'mealtime')10]呦。\n")
+					SHIORI_FW.PushNoBreakNotifyResult("\1\s[%(specialmode != 'mealtime')10]呦。\n")
 				else
-					SHIORI_FW.PushNotifyResult('\0\s[26]欢迎回来。\n')
+					SHIORI_FW.PushNoBreakNotifyResult('\0\s[26]欢迎回来。\n')
 			}
 		}
 		ERASEVAR('displaypoweroff.starttime')
@@ -1388,10 +1382,10 @@ OnSysResume{
 	ERASEVAR('InSystemSuspend')
 	BaseGhostStart.aboutTime
 	if !InMinimize{
-		SHIORI_FW.PushNotifyResult(OnSysResume.base)
-		SHIORI_FW.PushNotifyResult(OnAutoChangeShell.boot)
-		SHIORI_FW.PushNotifyResult(OnBoot.aboutTime)
-		SHIORI_FW.PushNotifyResult(OnWeatherUpdate.boot)
+		SHIORI_FW.PushNoBreakNotifyResult(OnSysResume.base)
+		SHIORI_FW.PushNoBreakNotifyResult(OnAutoChangeShell.boot)
+		SHIORI_FW.PushNoBreakNotifyResult(OnBoot.aboutTime)
+		SHIORI_FW.PushNoBreakNotifyResult(OnWeatherUpdate.boot)
 	}
 }
 //资源不足
