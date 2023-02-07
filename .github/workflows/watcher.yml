@@ -79,7 +79,7 @@ jobs:
         uses: actions-go/push@master
         with:
           token: ${{ secrets.BOT_TOKEN }}
-          author-email: taromati2@foxmail.com
+          author-email: taromati2@outlook.com
           author-name: Taromati2
           commit-message: 'files update~'
           remote: origin
