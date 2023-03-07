@@ -1,6 +1,6 @@
 charset,UTF-8
 type,rss
-name,ITmedia +D Games
-url,http://plusd.itmedia.co.jp/games/
-feed,http://rss.itmedia.co.jp/rss/2.0/games.xml
+name,‚Ë‚Æ‚ç‚Ú
+url,https://nlab.itmedia.co.jp/
+feed,https://rss.itmedia.co.jp/rss/2.0/netlab.xml
 homeurl,http://ssp.shillest.net/update/headline/softbankgames/

@@ -2,5 +2,5 @@ charset,UTF-8
 type,rss
 name,GAME Watch
 url,http://game.watch.impress.co.jp/
-feed,http://rss.rssad.jp/rss/gamewatch/index.rdf
+feed,https://game.watch.impress.co.jp/data/rss/1.0/gmw/feed.rdf
 homeurl,http://ssp.shillest.net/update/headline/gamewatch/

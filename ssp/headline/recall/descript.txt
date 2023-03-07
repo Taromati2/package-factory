@@ -1,6 +1,6 @@
 charset,Shift_JIS
 name,‰ñûE–³C—“™‚Ì‚¨’m‚ç‚¹
 dllname,headline.dll
-url,http://www.recall.go.jp/article/
-openurl,http://www.recall.go.jp/article/
+url,https://www.recall.caa.go.jp/result/index.php?screenkbn=03
+openurl,https://www.recall.caa.go.jp/result/index.php?screenkbn=03
 homeurl,http://ssp.shillest.net/update/headline/recall/
