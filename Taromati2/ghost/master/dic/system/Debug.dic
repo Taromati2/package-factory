@@ -11,14 +11,16 @@ IsUrl{
 	else
 		0
 }
+IsSakuraScript{
+	RE_GREP(_argv[0],'\\_{0,2}[a-zA-Z0-9*!&\-+](\d|\[("([^"]|\\")+?"|([^\]]|\\\])+?)+?\])?')
+}
 OnShioriMemoryError{
 	_stack=GETCALLSTACK
 	_func=_stack[ARRAYSIZE(_stack)-2]
-	_info=GETFUNCINFO(_func)
-	_errorinfo='内存错误\n调用堆栈：\n'+REPLACE(TOSTR(_stack),',','\n')
-	_errorinfo_for_copy=REPLACE(_errorinfo,'\n',CHR(1))
+	_errorheader='内存错误：函数'+_func
+	_errorinfo='调用堆栈：\n'+REPLACE(TOSTR(_stack),',','\n')
 	--
-	BUGNow(_errorinfo,_errorinfo_for_copy)
+	BUGNow(_errorheader,_errorinfo)
 }
 OnshioriLimit{
 	_stack=GETCALLSTACK
@@ -27,7 +29,6 @@ OnshioriLimit{
 	//_argv[1]&_argv[2]只在call或loop时存在
 	_file=_argv[1]
 	_linenum=_argv[2]
-	_errorinfo_for_copy=''
 	case _type{
 		when 'call'
 			_type_txt='递归'
@@ -42,10 +43,9 @@ OnshioriLimit{
 		}
 	}
 	_errorinfo_header=_type_txt+'至限：文件'+_file+'第'+_linenum+'行'
-	_errorinfo_for_copy=_errorinfo_header+CHR(1)+'调用堆栈：'+REPLACE(TOSTR(_stack),',',CHR(1))
-	_errorinfo_header=REPLACE(_errorinfo_header,'\','\\')
+	_errorinfo='调用堆栈：\n'+REPLACE(TOSTR(_stack),',','\n')
 	--
-	BUGNow(_errorinfo_header,_errorinfo_for_copy)
+	BUGNow(_errorinfo_header,_errorinfo)
 }
 OnReloadShiori{
 	if mode == '1'
@@ -89,7 +89,7 @@ ValueTOstring{
 		elseif "'" !_in_ _argv[0]
 			"'"+_argv[0]+"'"
 		else
-			REPLACE(RE_REPLACE(RE_REPLACE('"'+REPLACE(_argv[0],'"','"+'+"'"+'"'+"'"+'+"')+'"','^\"\"\+',''),'\+\"\"$',''),'"'+"'+'"+'"','')
+			'"'+REPLACE(_argv[0],'"','""')+'"'
 	}
 	elseif GETTYPE(_argv[0])==5{
 		'map'
@@ -98,6 +98,52 @@ ValueTOstring{
 		'NULL'
 	else
 		TOSTR(_argv[0])
+}
+//用虚拟终端序列色彩化的ValueTOstring
+ValueTOstring.Coloured{
+	_red=CHR(27)+'[31m'
+	_green=CHR(27)+'[32m'
+	_yellow=CHR(27)+'[33m'
+	_blue=CHR(27)+'[34m'
+	_magenta=CHR(27)+'[35m'
+	_cyan=CHR(27)+'[36m'
+	_white=CHR(27)+'[37m'
+	_reset=CHR(27)+'[0m'
+	//
+	if _argc > 1{
+		_cyan
+		--
+		_t='('
+		foreach _argv;_i{
+			_t+=ValueTOstring.Coloured(_i)+_cyan+','
+		}
+		RE_REPLACE(_t,'\,$',_cyan+')')
+		--
+		_reset
+	}
+	elseif ISSTR(_argv[0]){
+		_magenta
+		--
+		if '"' !_in_ _argv[0]
+			'"'+_argv[0]+'"'
+		elseif "'" !_in_ _argv[0]
+			"'"+_argv[0]+"'"
+		else
+			'"'+REPLACE(_argv[0],'"','""')+'"'
+		--
+		_reset
+	}
+	elseif GETTYPE(_argv[0])==5{
+		_green
+		--
+		'map'
+		--
+		_reset
+	}
+	elseif TOSTR(_argv[0])==''
+		_white+'NULL'+_reset
+	else
+		_yellow+TOSTR(_argv[0])+_reset
 }
 ValueTOstring.SakuraScript{
 	REPLACE(ValueTOstring(_argv),'\','\\')
@@ -252,7 +298,7 @@ On_ShioriEcho.GetResult {
 	}
 	else{
 		if ISVAR('ShioriEcho.Result'){
-			SHIORI_FW.Make_X_SSTP_PassThru('Result',ValueTOstring(ShioriEcho.Result))
+			SHIORI_FW.Make_X_SSTP_PassThru('Result',ValueTOstring.Coloured(ShioriEcho.Result))
 			SHIORI_FW.Make_X_SSTP_PassThru('Type',GETTYPE.string((ShioriEcho.Result)))
 		}
 	}
@@ -545,28 +591,8 @@ GetResourceEventRealName{
 	else
 		_argv[0]
 }
-IsResourceEvent{
-	if SUBSTR(_argv[0],0,3) != 'On_'{
-		0
-		return
-	}
-	case SUBSTR(_argv[0],3,STRLEN(_argv[0])){
-		when 'basewareversion','hwnd','uniqueid','capability','ownerghostname','otherghostname','installedghostname','installedshellname','installedballoonname','installedheadlinename','installedplugin','configuredbiffname','ghostpathlist','balloonpathlist','headlinepathlist','pluginpathlist','calendarskinpathlist','calendarpluginpathlist','rateofusegraph','inputbox.autocomplete'
-			0
-		others
-			1
-	}
-}
 Get_UKADOC_ofEvent{
-	'http://ssp.shillest.net/ukadoc/manual/'
-	--
-	if IsResourceEvent(_argv[0])
-		'list_shiori_resource'
-	else
-		'list_shiori_event'
-	--
-	_argv[0]=GetResourceEventRealName(_argv[0])
-	".html#%(_argv[0])"
+	"http://ssp.shillest.net/ukadoc/manual/?event_name=%(_argv[0])"
 }
 Get_AYA_Function_Doc{
 	'http://emily.shillest.net/ayaya/?%E3%83%9E%E3%83%8B%E3%83%A5%E3%82%A2%E3%83%AB/%E9%96%A2%E6%95%B0/'+_argv[0]
