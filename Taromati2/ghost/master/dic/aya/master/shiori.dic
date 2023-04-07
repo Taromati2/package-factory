@@ -345,12 +345,9 @@ request {
 	var.req.value	= IARRAY
 	var.req.rawvalue= IARRAY
 
-	_linenum = 0
-	_idparsed = 0
-
 	status = ''
 	SHIORI_FW.Eventid=''
-	SHIORI_FW.SecurityLevel='Internal'//互換性のためデフォルトはInternal
+	SHIORI_FW.SecurityLevel='local'//互換性のためデフォルトはlocal
 
 	while _lineend > _linestart {
 		//行分割
@@ -360,15 +357,6 @@ request {
 		//空行もしくはみつからなかった
 		if _lineend <= _linestart {
 			break
-		}
-
-		_linenum += 1
-		if SHIORI_FW.REQUEST_LINES_LIMIT {
-			if _linenum > SHIORI_FW.REQUEST_LINES_LIMIT {
-				if _idparsed {
-					break
-				}
-			}
 		}
 
 		_lin = SUBSTR(_reqdata,_linestart,(_lineend - _linestart))
@@ -395,15 +383,6 @@ request {
 			SHIORI_FW.Eventid = _value
 			if SUBSTR(SHIORI_FW.Eventid, 0, 2) != 'On'
 				SHIORI_FW.Eventid = 'On_' + SHIORI_FW.Eventid
-
-			SHIORI_FW.EventidTranslate = SHIORI_FW.TranslateEvent(SHIORI_FW.Eventid)
-
-			//ハンドラが無い場合は即返る
-			if !ISFUNC(SHIORI_FW.EventidTranslate) && !SHIORI_FW.IsImportantEvent {
-				SHIORI_FW.NoMatchingEvent
-				return
-			}
-			_idparsed = 1
 		}
 		//セキュリティレベル
 		elseif _key == 'SecurityLevel' {
@@ -422,11 +401,6 @@ request {
 			status = _value
 		}
 
-		if TOLOWER(SHIORI_FW.SecurityLevel) == 'external' && SHIORI_FW.Eventid != 'OnXUkagakaLinkOpen' {
-			SHIORI_FW.MakeBadResponse
-			return
-		}
-
 		//キーと値を記憶
 		var.req.rawvalue ,= _value
 
@@ -441,6 +415,17 @@ request {
 		else {
 			var.req.value ,= TOAUTOEX(_value)
 		}
+	}
+
+	if TOLOWER(SHIORI_FW.SecurityLevel) == 'external'
+		SHIORI_FW.Eventid = 'ExternalEvent.'+SHIORI_FW.Eventid
+
+	SHIORI_FW.EventidTranslate = SHIORI_FW.TranslateEvent(SHIORI_FW.Eventid)
+
+	//ハンドラが無い場合は即返る
+	if !ISFUNC(SHIORI_FW.EventidTranslate) && !SHIORI_FW.IsImportantEvent {
+		SHIORI_FW.NoMatchingEvent
+		return
 	}
 
 	OnRequest
@@ -1249,8 +1234,12 @@ FUNCTIONEX {
 	}
 
 	//リクエスト文字列を作成
-	_reqheader = /
-	"EXECUTE SAORI/1.0%(C_CRLF)Charset: %(CHARSETLIBEX(_argv[0]))%(C_CRLF)Sender: AYA%(C_CRLF)SecurityLevel: Local%(C_CRLF)"
+	_reqheader = "/
+	EXECUTE SAORI/1.0%(C_CRLF)/
+	Charset: %(CHARSETLIBEX(_argv[0]))%(C_CRLF)/
+	Sender: AYA%(C_CRLF)/
+	SecurityLevel: local%(C_CRLF)/
+	"
 	for _i = 1; _i < _argc; _i++ {
 		_reqheader += "Argument%(_i - 1): %(_argv[_i])%(C_CRLF)"
 	}
@@ -1270,7 +1259,11 @@ FUNCTIONEX {
 //引数　：_argv[0] SAORIファイル名
 //------------------------------------------------------------------------------
 SHIORI_FW.SendGETVersion {
-	SHIORI_FW.RequestLib(_argv[0], "GET Version SAORI/1.0%(C_CRLF)Charset: %(CHARSETLIBEX(_argv[0]))%(C_CRLF)Sender: AYA%(C_CRLF2)")
+	SHIORI_FW.RequestLib(_argv[0], "/
+	GET Version SAORI/1.0%(C_CRLF)/
+	Charset: %(CHARSETLIBEX(_argv[0]))%(C_CRLF)/
+	Sender: AYA%(C_CRLF2)/
+	")
 
 	LIB.STATUSCODE
 }
@@ -1632,33 +1625,49 @@ SHIORI_EV.OnBalloonChange : void {
 	SHIORI_FW.OnChangeSelfInfo
 }
 Get_Full_Defened_Event_Name{
+	_event_name=_argv[0]
+	if SUBSTR(_event_name,0,2) != 'On'
+		_event_name='On_'+_event_name
+	if ISFUNC(_event_name)
+		_event_name
+	elseif ISFUNC('SHIORI_FW.'+_event_name)
+		'SHIORI_FW.'+_event_name
+	elseif ISFUNC('SHIORI_EV.'+_event_name)
+		'SHIORI_EV.'+_event_name
+}
+Get_Func_Or_Full_Defened_Event_Name{
 	if ISFUNC(_argv[0])
 		_argv[0]
-	elseif ISFUNC('On_'+_argv[0])
-		'On_'+_argv[0]
-	elseif ISFUNC('SHIORI_FW.'+_argv[0])
-		'SHIORI_FW.'+_argv[0]
-	elseif ISFUNC('SHIORI_EV.'+_argv[0])
-		'SHIORI_EV.'+_argv[0]
-	elseif ISFUNC('SHIORI_EV.On_'+_argv[0])
-		'SHIORI_EV.On_'+_argv[0]
+	else
+		Get_Full_Defened_Event_Name(_argv[0])
 }
 Is_Defened_Event{
-	if ISFUNC(_argv[0])
+	_event_name=_argv[0]
+	if SUBSTR(_event_name,0,2) != 'On'
+		_event_name='On_'+_event_name
+	if ISFUNC(_event_name)
 		1
-	elseif ISFUNC('On_'+_argv[0])
+	elseif ISFUNC('SHIORI_FW.'+_event_name)
 		1
-	elseif ISFUNC('SHIORI_FW.'+_argv[0])
-		1
-	elseif ISFUNC('SHIORI_EV.'+_argv[0])
-		1
-	elseif ISFUNC('SHIORI_EV.On_'+_argv[0])
+	elseif ISFUNC('SHIORI_EV.'+_event_name)
 		1
 	else
 		0
 }
+Is_Defened_Event_Or_Func{
+	ISFUNC(_argv[0]) || Is_Defened_Event(_argv[0])
+}
 SHIORI_EV.On_Has_Event : void {
-	SHIORI_FW.Make_X_SSTP_PassThru('Result',ISFUNC(reference0)||ISFUNC('On_'+reference0)||ISFUNC('SHIORI_EV.'+reference0)||ISFUNC('SHIORI_EV.On_'+reference0))
+	_event_name=reference0
+	if SUBSTR(_event_name,0,2) != 'On'
+		_event_name='On_'+_event_name
+	_result=0
+	if TOLOWER(SHIORI_FW.SecurityLevel) == 'external'
+		_event_name='ExternalEvent.'+_event_name
+	_result=ISFUNC(_event_name)
+	if !_result
+		_result=ISFUNC('SHIORI_EV.'+_event_name)
+	SHIORI_FW.Make_X_SSTP_PassThru('Result',_result)
 }
 
 //---- SHIORI 関連情報 ------------------------------------------------------------------
