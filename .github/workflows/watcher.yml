@@ -1,0 +1,85 @@
+on:
+  schedule:
+    - cron:  '0 0 7 * *'
+  workflow_dispatch:
+    inputs:
+      watch-ghost:
+        description: '检查ghost更新'
+        required: true
+        default: 'true'
+      watch-ssp:
+        description: '检查ssp更新'
+        required: true
+        default: 'true'
+  push:
+    paths:
+      - '.github/workflows/**'
+      - 'build_resources/dic_overwrite/**'
+
+name: watch updates
+
+jobs:
+  watch:
+    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+    name: watch updates
+    runs-on: ubuntu-latest
+    steps:
+      - name: disable auto crlf
+        uses: steve02081504/disable-autocrlf@v1
+        with:
+          fuck-auto-CRLF: true
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: clone stable-mirror
+        if: github.event.inputs.watch-ghost != 'false'
+        run: |
+          git clone --depth 1 --filter=blob:none --sparse https://github.com/Taromati2/stable-mirror
+          cd stable-mirror
+          git sparse-checkout init
+          git sparse-checkout set Taromati2/ghost/master
+          cd ..
+      - name: build taromati2 dic
+        if: github.event.inputs.watch-ghost != 'false'
+        run: |
+          rm -rf Taromati2/ghost/master/dic
+          /bin/cp -rf stable-mirror/Taromati2/ghost/master/dic Taromati2/ghost/master
+          /bin/cp -rf build_resources/dic_overwrite/* Taromati2/ghost/master/dic
+      - name: build full data pack
+        if: github.event.inputs.watch-ghost != 'false'
+        run: |
+          cd full_data_pack
+          rm -rf data img
+          /bin/cp -rf ../stable-mirror/Taromati2/ghost/master/data data
+          /bin/cp -rf ../stable-mirror/Taromati2/ghost/master/img img
+          rm -rf data/LearnJapanese/sonido/readme.txt
+          cd ..
+      - name: update aya
+        if: github.event.inputs.watch-ghost != 'false'
+        run: |
+          /bin/cp -rf stable-mirror/Taromati2/ghost/master/shiori/aya.dll Taromati2/ghost/master/shiori/aya.dll
+      - name: remove stable-mirror
+        if: github.event.inputs.watch-ghost != 'false'
+        run: rm -rf stable-mirror
+      - name: build ssp
+        if: github.event.inputs.watch-ssp != 'false'
+        run: |
+          rm -rf ssp
+          aria2c -o ssp.zip "http://ssp.shillest.net/archive/redir.cgi?stable&full&zip"
+          mkdir ssp
+          7z x ssp.zip -o./ssp/
+          rm -rf ssp/ghost ssp/balloon ssp/temp
+          find . -name "updates2.dau" | xargs rm -f
+          find . -name "updates.txt" | xargs rm -f
+          aria2c https://github.com/steve02081504/ssp-sinicization/releases/latest/download/chinese-simplified.nar
+          7z x chinese-simplified.nar -o./ssp/data/language/ -tzip
+          rm -rf ssp.zip chinese-simplified.nar ssp/data/language/.nar_icon
+      - name: add all
+        run: git add -A
+      - name: push
+        uses: actions-go/push@master
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+          author-email: taromati2@outlook.com
+          author-name: Taromati2
+          commit-message: 'files update~'
+          remote: origin

@@ -1,0 +1,11 @@
+charset,Shift_JIS
+message.end,\h完了。\e
+
+menu.title,[機能選択]
+menu.repair_icon,アイコン表示修復
+menu.empty_recycle_bin,ゴミ箱の中身を消去
+menu.delete_tmpfile,一時ファイル削除
+menu.exit_windows,Windowsの終了オプション
+menu.empty_recent_explorer,最近使ったファイル消去
+menu.cancel,キャンセル
+

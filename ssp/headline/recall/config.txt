@@ -1,0 +1,6 @@
+parse.start,<div class="search_result_main">
+parse.end,<div class="search_result_bottom">
+element.start,<td class="new_window">
+element.end,</td>
+headline.head,Бе
+charset,UTF-8

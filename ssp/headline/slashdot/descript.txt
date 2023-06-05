@@ -1,0 +1,6 @@
+charset,Shift_JIS
+name,ƒXƒ‰ƒh
+dllname,HEADLINE.dll
+url,http://slashdot.jp/
+openurl,http://slashdot.jp/
+homeurl,http://ssp.shillest.net/update/headline/slashdot/

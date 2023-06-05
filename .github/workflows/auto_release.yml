@@ -1,0 +1,171 @@
+on:
+  push:
+    paths:
+      - 'Taromati2/**'
+      - 'ssp/**'
+      - 'build_resources/for_ssp/**'
+  workflow_dispatch:
+    inputs:
+      pre-release:
+        description: '是否是预发布（通常用于测试包构建，不会影响latest链接）'
+        required: true
+        default: 'false'
+      rebuild-all:
+        description: '是否重新构建所有包'
+        required: true
+        default: 'false'
+
+name: auto release
+
+jobs:
+  check:
+    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+    name: auto check before release
+    runs-on: windows-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: shiori-check
+        uses: Taromati2/yaya-CI-check@v2
+        with:
+          shiori-path: .\Taromati2\ghost\master\shiori\aya.dll
+  build:
+    name: auto release
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - name: disable auto crlf
+        uses: steve02081504/disable-autocrlf@v1
+        with:
+          fuck-auto-CRLF: true
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 7
+      - name: changed-ghost-check
+        uses: marceloprado/has-changed-path@v1
+        id: changed-ghost
+        with:
+          paths: Taromati2
+      - name: changed-full-data-pack-check
+        uses: marceloprado/has-changed-path@v1
+        id: changed-full-data-pack
+        with:
+          paths: full_data_pack
+      - name: changed-ssp-check
+        uses: marceloprado/has-changed-path@v1
+        id: changed-ssp
+        with:
+          paths: ssp
+      - name: changed-ison-check
+        uses: marceloprado/has-changed-path@v1
+        id: changed-icon
+        with:
+          paths: build_resources/nar_icons
+      - name: only ssp updated
+        if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-ssp.outputs.changed == 'true'
+        run: |
+          echo "release-massages=（只有ssp更新了）" >> $GITHUB_ENV
+      - name: only ghost updated
+        if: steps.changed-ssp.outputs.changed == 'false' && steps.changed-ghost.outputs.changed == 'true'
+        run: |
+          echo "release-massages=（只有ghost更新了）" >> $GITHUB_ENV
+      - name: ghost and ssp updated
+        if: steps.changed-ghost.outputs.changed == 'true' && steps.changed-ssp.outputs.changed == 'true'
+        run: |
+          echo "release-massages=（ghost&ssp更新）" >> $GITHUB_ENV
+      - name: nar icons updated
+        if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-ssp.outputs.changed == 'false' && steps.changed-icon.outputs.changed == 'true'
+        run: |
+          echo "release-massages=（nar图标更新）" >> $GITHUB_ENV
+      - name: full data pack updated
+        if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-ssp.outputs.changed == 'false' && steps.changed-full-data-pack.outputs.changed == 'true'
+        run: |
+          echo "release-massages=（数据包更新）" >> $GITHUB_ENV
+      - name: others updated
+        if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-ssp.outputs.changed == 'false' && steps.changed-icon.outputs.changed == 'false'
+        run: |
+          echo "release-massages=（附件更新）" >> $GITHUB_ENV
+      - name: build StarterPack
+        run: |
+          mv build_resources/for_release/* .
+          /bin/cp -rf build_resources/for_ssp/* ./ssp
+          /bin/cp -rf Taromati2/ghost/master/shiori/aya.dll ssp/ghost/ssper/ghost/master/ssper.dll
+          /bin/cp -rf build_resources/nar_icons/Taromati2/.nar_icon ./.nar_icon
+          7z a -tzip "Taromati2.nar" -mx=0 -mmt -mtc=off "Taromati2" ".nar_icon"
+          7z a -t7z "StarterPack.7z" -mx=9 -mmt -mtm=off -ms=512m -mhc -mhcf -m0=LZMA2:a=2:d=1536m:mf=bt4:fb=273:lc=4:lp=0:pb=4 "Taromati2.nar" "ssp" "使用方法.txt"
+          rm -rf Taromati2.nar
+      - name: build ssp pack
+        run: |
+          7z a -t7z "ssp.7z" -mx=9 -mmt -mtm=off -ms=512m -mhc -mhcf -m0=LZMA2:a=2:d=1536m:mf=bt4:fb=273:lc=4:lp=0:pb=4 ./ssp/*
+          cat build_resources/7z.sfx ssp.7z > ssp.exe
+      - name: get nar
+        if: steps.changed-ghost.outputs.changed == 'false' && steps.changed-icon.outputs.changed == 'false' && github.event.inputs.rebuild-all != 'true'
+        run: |
+          aria2c https://github.com/Taromati2/package-factory/releases/latest/download/Taromati2.nar
+      - name: build nar
+        if: steps.changed-ghost.outputs.changed == 'true' || steps.changed-icon.outputs.changed == 'true' || github.event.inputs.rebuild-all == 'true'
+        run: |
+          rm -rf ./.nar_icon
+          /bin/cp -rf build_resources/nar_icons/Taromati2/.nar_icon ./.nar_icon
+          7z a -tzip "Taromati2.nar" -mx=9 -mmt -mm=LZMA -md=1536m -mfb=273 -mtc=off "Taromati2" ".nar_icon"
+      - name: get full data pack
+        if: steps.changed-full-data-pack.outputs.changed == 'false' && steps.changed-icon.outputs.changed == 'false' && github.event.inputs.rebuild-all != 'true'
+        run: |
+          aria2c https://github.com/Taromati2/package-factory/releases/latest/download/full_data_pack.nar
+      - name: build full data pack
+        if: steps.changed-full-data-pack.outputs.changed == 'true' || steps.changed-icon.outputs.changed == 'true' || github.event.inputs.rebuild-all == 'true'
+        run: |
+          rm -rf ./.nar_icon
+          /bin/cp -rf build_resources/nar_icons/full_data_pack/.nar_icon ./.nar_icon
+          7z a -tzip "full_data_pack.nar" -mx=9 -mmt -mm=LZMA -md=1536m -mfb=273 -mtc=off "full_data_pack" ".nar_icon"
+      - name: create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+        with:
+          tag_name: ${{ github.run_id }}
+          release_name: auto build
+          body: |
+            自动构建的包文件
+            仅此而已
+            ${{ env.release-massages }}
+          draft: false
+          prerelease: ${{ github.event.inputs.prerelease == 'true' }}
+      - name: upload StarterPack
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./StarterPack.7z
+          asset_name: StarterPack.7z
+          asset_content_type: application/zip
+      - name: upload nar
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Taromati2.nar
+          asset_name: Taromati2.nar
+          asset_content_type: application/zip
+      - name: upload full data pack
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./full_data_pack.nar
+          asset_name: full_data_pack.nar
+          asset_content_type: application/zip
+      - name: upload ssp pack
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./ssp.exe
+          asset_name: ssp.exe
+          asset_content_type: application/vnd.microsoft.portable-executable

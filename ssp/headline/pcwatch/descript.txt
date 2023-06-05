@@ -1,0 +1,6 @@
+charset,UTF-8
+type,rss
+name,PC Watch
+url,http://pc.watch.impress.co.jp/
+feed,http://pc.watch.impress.co.jp/sublink/pc.rdf
+homeurl,http://ssp.shillest.net/update/headline/pcwatch/

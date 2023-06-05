@@ -1,0 +1,6 @@
+charset,UTF-8
+type,rss
+name,ITMedia News
+url,http://www.itmedia.co.jp/news/
+feed,http://rss.itmedia.co.jp/rss/2.0/news_bursts.xml
+homeurl,http://ssp.shillest.net/update/headline/itmedia/

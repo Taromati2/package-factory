@@ -1,0 +1,11 @@
+charset,Shift_JIS
+message.end,\hCompleted.\e
+
+menu.title,[Choose Function]
+menu.repair_icon,Repair Icon Cache
+menu.empty_recycle_bin,Empty Recycle Bin
+menu.delete_tmpfile,Delete Temp File
+menu.exit_windows,Exit Windows
+menu.empty_recent_explorer,Empty Recent Files
+menu.cancel,Cancel
+

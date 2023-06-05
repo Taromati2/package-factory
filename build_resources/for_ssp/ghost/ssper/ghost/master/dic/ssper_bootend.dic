@@ -1,0 +1,135 @@
+OnFirstBoot
+{
+	username         = '用户'
+	stroke           = 0
+	teachusername    = 0
+	mikireflag       = 0
+	communicateratio = 0
+
+	'\1\s[-1]\0'
+	--
+	if reference0 == 0{
+		'\0\_q\s[0]\w8\w8\w8Hello!我是\n\w8S-S-P-E-R！/
+		\w8\n欢迎使用SSP中文版！\w8\n\n/
+		\w8作者:C\.Ponapalt\n/
+		\w8\0日本官方站:SSP BUGTRAQ\w8\n中文发布站:SSP CERS/
+		\w8\w8\_q\e'
+	}
+	else{
+		'\0\s[0]再次见面了。\w5'
+		--
+		if reference0 == 1{
+			"\0\n\n你好像是\w4%username。\w5"
+		}
+		else{
+			"\0\s[0]\n\n‥\w5‥\w5%reference0回も消しておいて、いまさら勘違いだなんてことはないでしょ。\n/
+			%username、飽きっぽいって言われない？\w5"
+		}
+		--
+		'\1\n\n‥\w5‥\w5ま、\w9まあ、いいだろ。\0\n\nそうだね。またよろしく。\e'
+	}
+}
+
+
+
+OnBoot
+{
+	'\1\s[-1]\0'
+	--
+	_timeslot = GetTimeSlot
+	if _timeslot == '朝'{
+		"\0早上好、%username。\w5又是新的一天。\e"
+	}
+	elseif _timeslot == '昼'{
+		"\0你好、%username。中午吃的好吗？\w5"
+	}
+	elseif _timeslot == '日中'{
+		"\0你好、%username。\w6\n\n一切都还顺利吧？\e"
+	}
+	elseif _timeslot == '夜'{
+		"\0晚上好、%username。\e"
+	}
+	else{
+		'\0现在很晚了，早点睡吧。\e'
+	}
+}
+
+GetTimeSlot
+{
+	if hour >= 4 && hour <= 11{
+		'朝'
+	}
+	elseif hour == 12 || hour == 13{
+		'昼'
+	}
+	elseif hour >= 14 && hour <= 17{
+		'日中'
+	}
+	elseif hour >= 18 && hour <= 21{
+		'夜'
+	}
+	else{
+		'深夜'
+	}
+}
+
+
+
+OnClose
+{
+	'\0'
+	--
+	_timeslot = GetTimeSlot
+	if _timeslot == '朝'{
+		//---- 朝に終了
+		'一晚没睡吗？'
+	}
+	elseif _timeslot == "昼" || _timeslot == "日中"{
+		//---- 昼/日中に終了
+		'下次见。'
+	}
+	else{
+		//---- 夜/深夜に終了
+		'晚安。'
+	}
+	--
+	'\-\e'
+}
+
+
+
+OnWindowStateRestore
+{
+	'\0还原了。\e'
+}
+
+
+
+OnGhostChanging
+{
+	if reference1 == 'manual'{
+		//---- 手動切り替え
+		"\0目标人格:%reference0。\e"
+	}
+	else{
+		//---- 自動切換え
+		"\0自动切换，目标人格:%reference0。\e"
+	}
+}
+
+OnGhostChanged
+{
+	'SSPER切换完成。\e'
+}
+
+OnShellChanging
+{
+	'\0\s[0]外表变更开始。\e'
+}
+
+OnShellChanged
+{
+	"\0\s[0]%reference0外表切换完成。\e"
+}
+
+
