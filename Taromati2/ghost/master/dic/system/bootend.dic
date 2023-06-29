@@ -46,7 +46,13 @@ OnInitialize{
 		OnSQLLoad.Fixer//非中文环境编码问题再修复
 		SETTAMAHWND(TamaHwnd)
 		if ReloadFromTerminal{
-			ShioriEcho.Special='重载完成'
+			if SHIORI_FW.EmergencyMode
+				ShioriEcho.Special=ansi_red+'语法错误：使用'+ansi_reset+'errorlog'+ansi_red+'命令查看错误日志'+ansi_reset
+			else{
+				ShioriEcho.Special='重载完成'
+				if GHOST.IsGitPath
+					ShioriEcho.Special+='\n'+GhostTerminal.GITinfo
+			}
 			ERASEVAR('ReloadFromTerminal')
 		}
 		if SHIORI_FW.LastBootInEmergencyMode
@@ -120,7 +126,7 @@ OnFirstBoot{//改动于2020 by steve02081504
 			SHIORI_FW.PushNoBreakNotifyResult(UpdateFirst)
 		--
 		if InTimeError
-			SHIORI_FW.PushNoBreakNotifyResult(OnTimeError)
+			SHIORI_FW.PushNoBreakNotifyResult(OnCheckTimeCorrect)
 	}else{
 		OnBoot('FromFirstBoot')
 	}
@@ -251,7 +257,7 @@ OnBoot.base{
 	}
 	--
 	if InTimeError
-		SHIORI_FW.PushNoBreakNotifyResultToTop(OnTimeError)
+		SHIORI_FW.PushNoBreakNotifyResultToTop(OnCheckTimeCorrect)
 	else
 		OnBoot.aboutTime
 	--
