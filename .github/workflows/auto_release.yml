@@ -123,6 +123,7 @@ jobs:
         with:
           keep_latest: 7
           keep_min_download_counts: 24
+          delete_tags: true
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
       - name: create release
