@@ -119,6 +119,12 @@ jobs:
           rm -rf ./.nar_icon
           /bin/cp -rf build_resources/nar_icons/full_data_pack/.nar_icon ./.nar_icon
           7z a -tzip "full_data_pack.nar" -mx=9 -mmt -mm=LZMA -md=1536m -mfb=273 -mtc=off "full_data_pack" ".nar_icon"
+      - uses: dev-drprasad/delete-older-releases@v0.3.2
+        with:
+          keep_latest: 7
+          keep_min_download_counts: 24
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
       - name: create release
         id: create_release
         uses: actions/create-release@v1
