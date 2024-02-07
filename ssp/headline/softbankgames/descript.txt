@@ -1,6 +1,6 @@
 charset,UTF-8
 type,rss
-name,�˂Ƃ��
+name,ねとらぼ
 url,https://nlab.itmedia.co.jp/
 feed,https://rss.itmedia.co.jp/rss/2.0/netlab.xml
 homeurl,http://ssp.shillest.net/update/headline/softbankgames/
