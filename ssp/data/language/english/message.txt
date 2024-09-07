@@ -87,36 +87,36 @@ resource.scriptloglabel,Ghost,Type,Script
 
 resource.biff.allaccount,&All Accounts
 
-resource.browser.select,Select Web Browser
-resource.mailer.select,Select Mailer
-resource.editor.select,Select Editor
-resource.filer.select,Select File Manager
-resource.svn.select,Select Subversion EXE
-resource.git.select,Select Git EXE
+resource.browser.select,Select web browser
+resource.mailer.select,Select mailer
+resource.editor.select,Select editor
+resource.filer.select,Select file manager
+resource.svn.select,Select subversion EXE
+resource.git.select,Select git EXE
 
-resource.sound.select,Sound File
+resource.sound.select,Sound file
 resource.schedule.date,Schedule:%d.%d.%d
-resource.rateofuse.menu,Call Ghost,Close Ghost,Ghost Not Found,Delete This Data
+resource.rateofuse.menu,Call ghost,Close ghost,Ghost not found,Delete this data
 
-resource.setting.balloon.command,No Operation,Same As Left-Click,Script Termination,Change Direction,Change Balloon Offset,Show Menu,Move Character Window
-resource.setting.sstp.boot,Don't Boot,Messenger Only(SSTP/1.5),Boot Ghosts As Many As Possible (IfGhost)
-resource.setting.sstp.close,Close when Balloon-Hide Timing,Leave,Set Close Timer...
-resource.setting.update,Compatible with Other Clients,Strict (SSP Default),Restore Mode(Check All Files)
-resource.aboutghost.select,Ghost Information...,Shell Information...,Balloon Information...
+resource.setting.balloon.command,No operation,Same as left-click,Script termination,Change direction,Change balloon offset,Show menu,Move character window
+resource.setting.sstp.boot,Don't boot,Messenger only(SSTP/1.5),Boot ghosts as many as possible (IfGhost)
+resource.setting.sstp.close,Close when balloon-hide timing,Leave,Set close timer...
+resource.setting.update,Compatible with other clients,Strict (SSP default),Restore mode(check all files)
+resource.aboutghost.select,Ghost information...,Shell information...,Balloon information...
 resource.explorer.select,Ghost,Shell,Balloon,Headline,Plugin
 
-resource.setting.ghostcloseduration,Time until Ghost Closes
+resource.setting.ghostcloseduration,Time until ghost closes
 resource.setting.title,SSP:Configuration
-resource.setting.messengerlabel,User Name,Address,Port,Group
+resource.setting.messengerlabel,User name,Address,Port,Group
 resource.setting.dirservlabel,Service,Logon,Description
 resource.setting.ipportlabel,Port,Status
-resource.setting.bifflabel,Account,Address,AutoCheck
+resource.setting.bifflabel,Account,Address,Auto check
 
 resource.update.latest,You are using latest version. No need to update.
 resource.update.exist,New version released. Will you want to download it?
 resource.update.error,Can't check SSP version.
 
-resource.schedule.type,Event,Meeting,Appointment,Reservation,Time Limit,Party,A Date,Work,Go Out,TV,Recording,Cd,Game,Video,Book,Release
+resource.schedule.type,Event,Meeting,Appointment,Reservation,Time limit,Party,A date,Work,Go out,TV,Recording,CD,Game,Video,Book,Release
 
 //Script
 script.biff.check,Checking mail...
@@ -133,24 +133,24 @@ messenger.info.deluser,Delete selected recipients. Are you sure?
 biff.info.delaccount,Delete selected account. Are you sure?
 
 //LOG
-log.definedtwice,Defined Twice.
-log.boundrectempty,Bounding Rectangle Empty.
-log.offset,Offset Error.
-log.notfound,Not Found.
+log.definedtwice,Defined twice.
+log.boundrectempty,Bounding rectangle empty.
+log.offset,Offset error.
+log.notfound,Not found.
 log.empty,Empty.
-log.noimage,Has No Image.
+log.noimage,Has no image.
 log.invalid,Invalid
 log.typo,Invalid
-log.orphan,Not Used.
-log.bracebeginnotfound,"{" Not Found.
-log.braceendnotfound,"}" Not Found.
-log.braceextrachar,Extra Char. After "{" or "}".
+log.orphan,Not used.
+log.bracebeginnotfound,"{" Not found.
+log.braceendnotfound,"}" Not found.
+log.braceextrachar,Extra char. after "{" or "}".
 log.newold,New definition, Old version.
 log.oldnew,Old definition, New version.
-log.invalidalias,Invalid Alias.
-log.urlslashadd,URL "/" Added.
+log.invalidalias,Invalid alias.
+log.urlslashadd,URL "/" appended.
 log.deletetxtconflict,is also in delete.txt
-log.compatibility,Compatibility Problem in This Definition
+log.compatibility,Compatibility problem in this definition
 log.moduleerror,Communication error. Possible file corruption.
 log.similar,-- similar log repeat : x
 log.pngpna,PNA size is different from PNG, or PNA isn't grayscale : 
