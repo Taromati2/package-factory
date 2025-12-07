@@ -121,3 +121,7 @@
 2025/08/15 00:00:00	http://dennziryoku.blog101.fc2.com/	https://denmemo31.blog.fc2.com/
 2025/08/15 00:00:01	https://stheskeleton.usite.pro/	https://zichqec.github.io/s-the-skeleton/updates/ghosts/
 2025/08/15 00:00:02	http://sosiremi.appspot.com/dl/ghost/whitesword/WhiteSword.nar	https://nanachi.sakura.ne.jp/narnaloader/nar/WhiteSword.nar
+2023/05/22 18:40:34	http://night0v0l.webcrow.jp/	https://yoippari.n0v0.be/	
+2024/02/28 9:49:26	https://vtodd15.github.io/aurora/	https://raw.githubusercontent.com/yuyudev-thatoddhaystack/Aurora_Dot_EXE_yy/main/	Disregard previous entry with https://raw.githubusercontent.com/yuyudev-thatoddhaystack/Aurora_Dot_EXE_yy/main/
+2024/02/28 9:49:57	https://vtodd15.github.io/aiba/	https://raw.githubusercontent.com/yuyudev-thatoddhaystack/Aiba_yy/main/	Disregard previous entry with https://raw.githubusercontent.com/yuyudev-thatoddhaystack/Aiba_yy/main/
+2025/11/06 23:22:26	https://seizonkakuninbasyo.web.fc2.com/ukagakatop.html	https://hutoshilv5gero.wixsite.com/seizonkakuninbasyo	
