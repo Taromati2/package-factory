@@ -34,14 +34,30 @@
 　　　以下指定した分だけ続く
 
 
-・値を書き込む
+・値を書き込む／値の消去（自ゴースト領域）
 
 　実行タグ：
 
-　　\![raiseplugin,ABED14AF-F34B-4ff2-95B7-30ED37D5802D,OnSharedValueRead,(変数名1),(変数1の値),(変数名2),(変数2の値)...]
+　　\![raiseplugin,ABED14AF-F34B-4ff2-95B7-30ED37D5802D,OnSharedValueWrite,(変数名1),(変数1の値),(変数名2),(変数2の値)...]
 　　「ゴースト名」を指定することはできません。必ず自分のゴースト名領域への保存となります。
 　　これは、別ゴースト領域への書き込みを防ぎ、予期しない問題を防ぐための仕様となります。
 　　（例：別のゴーストに勝手に好感度を書き換えられた、など）
+
+　　【重要】空文字列を書き込むと変数を消去できます。
+
+　タグへの返信イベントはありません。
+
+
+・値を書き込む／値の消去（任意ゴースト領域）
+
+　実行タグ：
+
+　　\![raiseplugin,ABED14AF-F34B-4ff2-95B7-30ED37D5802D,OnSharedValueWriteEx,(ゴースト名),(変数名1),(変数1の値),(変数名2),(変数2の値)...]
+　　OnSharedValueWriteの拡張版です。
+　　第1引数に書き込み先のゴースト名をフルネーム(descriptのname)で指定します。
+　　他ゴーストの共有変数領域にも書き込むことができます。
+
+　　【重要】空文字列を書き込むと変数を消去できます。
 
 　タグへの返信イベントはありません。
 
@@ -79,6 +95,20 @@
 　　・NOTIFYイベント：このイベント通知でスクリプトを返すことはできません。
 
 
+・拡張プロパティの取得＆設定
+
+　プロパティ名の書式：
+　　pluginlist(ABED14AF-F34B-4ff2-95B7-30ED37D5802D).ext.ghost(ゴースト名).key(キー名)
+
+　戻り値：
+　　対応するゴーストのキーに格納された値を返します。
+　　値が存在しない場合は204 No Contentを返します。
+
+　仕様詳細：
+　　https://ssp.shillest.net/ukadoc/manual/list_plugin_event.html#property.get
+　　https://ssp.shillest.net/ukadoc/manual/list_plugin_event.html#property.set
+
+
 ■配布条件等
 
 license.txtを見てください。
@@ -87,5 +117,8 @@ license.txtを見てください。
 
 ・2010/9/27 1.0
 　First Release
-
+・2026/03/21 1.1
+　OnSharedValueWriteEx を追加
+・2026/03/22 1.2
+　OnGetProperty・OnSetProperty仕様の対応
 
